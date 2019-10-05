@@ -21,6 +21,6 @@ public class Hello extends HttpServlet {
 
       // Actual logic goes here.
       PrintWriter out = response.getWriter();
-      out.println("<h1>" + message + "</h1>");
+      out.println("<h1>" + message + "</h1>" + "<img alt="Spring Team" src="//fgl.scene7.com/is/image/FGLSportsLtd/FGL_TheDrop_Helly_Hansen_Puma_CMS_1732x310?wid=1920&amp;fit=fit,1&amp;op_sharpen=1&amp;resMode=sharp2&amp;qlt=85,1">");
    }
 }
