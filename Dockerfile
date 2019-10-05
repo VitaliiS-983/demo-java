@@ -1,7 +1,7 @@
 FROM maven:3-jdk-8 as builder
 MAINTAINER SpringTeam
 WORKDIR /root/
-COPY apps /root/apps
+COPY . /root/apps
 WORKDIR /root/apps
 RUN mvn clean package
 
