@@ -4,9 +4,11 @@ WORKDIR /root/
 COPY . /root/apps
 WORKDIR /root/apps
 RUN mvn clean package
+RUN pwd
 
 FROM tomcat:8.5
-COPY --from=builder /root/apps/target/demo.war /usr/local/tomcat/webapps/demo.war
+RUN pwd
+COPY --from=builder ./root/apps/target/demo.war /usr/local/tomcat/webapps/demo.war
 RUN apt-get update && \
   apt-get install -y \
     net-tools \
