@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: aplication
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: aplication
+    spec:
+      containers:
+        - name: aplication
+          image: 744781134553.dkr.ecr.us-east-1.amazonaws.com/spring-ecr19:latest
+          ports:
+            - name: http-aplication
+              containerPort: 8080
+
