@@ -1,38 +1,36 @@
 pipeline {
-  agent {
-    kubernetes {
-      yaml """
-kind: Pod
-metadata:
-  name: kaniko
-spec:
-  containers:
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug
-    imagePullPolicy: Always
-    command:
-    - cat
-    tty: true
-    volumeMounts:
-      - name: docker-config
-        mountPath: /kaniko/.docker
-  volumes:
-    - name: docker-config
-      configMap:
-        name: docker-config
-"""
-    }
-  }
-  stages {
-    stage('Build with Kaniko') {
-      steps {
-        git 'https://github.com/sergiimatusEPAM/demo-java'
-        container(name: 'kaniko') {
-            sh '''
-            /kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=744781134553.dkr.ecr.us-east-1.amazonaws.com/spring-ecr19:latest
-            '''
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Running build automation'
+                sh './gradlew build --no-daemon'
+                //archiveArtifacts artifacts: 'dist/trainSchedule.zip'
+            }
         }
-      }
-    }
-  }
-}
+        stage('Build Docker Image') {
+            when {
+                branch 'master'
+            }
+            steps {
+                script {
+                    app = docker.build("vitaliis983/train-schedule")
+                    app.inside {
+                        sh 'echo $(curl localhost:8080)'
+                    }
+                }
+            }
+        }
+        stage('Push Docker Image') {
+            when {
+                branch 'master'
+            }
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker_hub_login') {
+                        app.push("${env.BUILD_NUMBER}")
+                        app.push("latest")
+                    }
+                }
+            }
+        }
